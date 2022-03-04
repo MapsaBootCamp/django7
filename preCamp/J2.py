@@ -88,11 +88,16 @@ def bmm2(a, b):
     while b:
         a, b = b, a%b
     return a
-
-
-while input("adadet ro bede") != "salam":
-    pass
+    
 
 print(bmm2(360 ** 8, 240 ** 12))
 def find_max_array(input_list):
     pass
+
+
+
+#### git
+
+### git push  ----> az local mibare roye remote
+### git pull  ----> az remote update ha rp miare roye local
+### git clone  ----> az remote avalin bar miare roye local
