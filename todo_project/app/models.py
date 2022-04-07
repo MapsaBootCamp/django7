@@ -22,7 +22,7 @@ class Todo(models.Model):
     due_date = models.DateTimeField(null=True, validators=[due_date_validator])
     create_at = models.DateTimeField(auto_now_add=True, null=True)
     done = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="todos")
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
 
     def __str__(self) -> str:
