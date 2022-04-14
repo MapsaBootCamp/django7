@@ -33,8 +33,8 @@ class C(B, D):
         super().salam(name)
 
 
-c = C()
-c.salam("Ashkan")
+# c = C()
+# c.salam("Ashkan")
 
 ################### metaclass
 class AMetaClass(type):
@@ -47,10 +47,52 @@ class AMetaClass(type):
         return "salam"
 
 class A(metaclass=AMetaClass):
+
+    def __init__(self) -> None:
+        print("init khode class")
+    
+    def __new__(cls, *args, **kwargs):
+        print("new khode class")
+        return super().__new__(cls, *args, **kwargs)
+
     def __call__(self, name) -> Any:
         print(name)
 
 # a = A()
-# a("Ashkan")
-# print(a)
-# print(A)
+
+
+###### life cycle instance creation in python.... call Meta, new khode class, init khode class
+
+
+
+#### abstraction
+
+from abc import ABCMeta, abstractmethod
+
+
+class Animal(metaclass=ABCMeta):
+    
+    @abstractmethod
+    def voice(self):
+        pass
+
+class Dog(Animal):
+
+    def voice(self):
+        print("vagh vagh")
+
+class Ghanari(Animal):
+
+    def voice(self):
+        print("chah chah")
+
+
+
+def sedaye_heivan(animal: Animal):
+    animal.voice()
+
+dog = Dog()
+sedaye_heivan(dog)
+
+ghanari = Ghanari()
+sedaye_heivan(ghanari)

@@ -1,5 +1,6 @@
 from typing import Dict, List
 
+
 class Graph:
     def __init__(self, directed=False) -> None:
         self._adj_mat : Dict[str, List] = {}
