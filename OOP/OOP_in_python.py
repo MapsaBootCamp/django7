@@ -75,23 +75,40 @@ class Animal(metaclass=ABCMeta):
     @abstractmethod
     def voice(self):
         pass
+    
+    @abstractmethod
+    def gaz_gereftan(self) -> bool:
+        pass
 
 class Dog(Animal):
-
+    
     def voice(self):
         print("vagh vagh")
+
+class Doberman(Dog):
+
+    def gaz_gereftan(self) -> bool:
+        return True
+
+class SageAhmagh(Dog):
+
+    def gaz_gereftan(self) -> bool:
+        return False
+
 
 class Ghanari(Animal):
 
     def voice(self):
         print("chah chah")
 
+    def gaz_gereftan(self) -> bool:
+        return False
 
 
 def sedaye_heivan(animal: Animal):
     animal.voice()
 
-dog = Dog()
+dog = Doberman()
 sedaye_heivan(dog)
 
 ghanari = Ghanari()
