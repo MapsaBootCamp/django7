@@ -108,8 +108,100 @@ class Ghanari(Animal):
 def sedaye_heivan(animal: Animal):
     animal.voice()
 
-dog = Doberman()
-sedaye_heivan(dog)
+# dog = Doberman()
+# sedaye_heivan(dog)
 
-ghanari = Ghanari()
-sedaye_heivan(ghanari)
+# ghanari = Ghanari()
+# sedaye_heivan(ghanari)
+
+##### dunder methods
+
+def sal():
+    print("sal")
+
+class DunderTrain:
+    _count = 12
+
+    class Meta:
+        pass
+
+    def __init__(self) -> None:
+        # print("salam!!")
+        self.name = "Ashkan"
+        self.__age = 12
+        self._meta = sal
+
+    def tarif_yek_attr_delkhah_shoma(self, attr_name, meghdar_avalieh):
+        setattr(self, attr_name, meghdar_avalieh)
+        print("salam")
+
+    def __len__(self):
+        return 12
+
+    # def __del__(self):
+    #     print("khodefz!!")
+
+    def __delete__(self, instance):
+        print(instance.camp)
+
+    def __iter__(self, start=0, stop=15):
+        while 1:
+            yield start
+            if start < stop-1:
+                start +=1
+            else:
+                return
+
+    # def __next__(self):
+    #     if self.count > DunderTrain._count:
+    #         raise StopIteration
+    #     else:
+    #         self.count += 1
+    #         return self.count
+
+
+    def __str__(self) -> str:
+        pass
+
+
+class BC:
+    object_dundertrain = DunderTrain()
+
+
+    def __init__(self) -> None:
+        self.camp = "Django"
+
+
+a = DunderTrain()
+# b = DunderTrain()
+
+# bc = BC()
+# bc1 = BC()
+# print(bc.exp.__dict__)
+# del a
+# print(bc.exp.__dict__)
+# print("shart shirini")
+# a._meta()
+# print(len(a))
+
+
+def range_khodemun(stop, start=0, step=1):
+    while 1:
+        yield start
+        if start < stop -1:
+            start +=1
+        else:
+            return
+
+
+# for elm in range_khodemun(128):
+#     print(elm)
+
+a = DunderTrain()
+# print(list(a))
+# for elm in a:
+#     print(elm)
+
+a.tarif_yek_attr_delkhah_shoma("shahr", "tahran")
+print(a.__dict__)
+# print(list(range_khodemun(12)))

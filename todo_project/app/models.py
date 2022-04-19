@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.forms import ValidationError
 from django.utils import timezone
 
+from django.views.generic import ListView
+
 class Category(models.Model):
     name = models.CharField(max_length=255, primary_key=True, unique=True)
 
