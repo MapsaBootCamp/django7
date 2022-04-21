@@ -203,5 +203,33 @@ a = DunderTrain()
 #     print(elm)
 
 a.tarif_yek_attr_delkhah_shoma("shahr", "tahran")
-print(a.__dict__)
+# print(a.__dict__)
 # print(list(range_khodemun(12)))
+
+
+
+class A:
+    def __init__(self, name):
+        self.name = name
+
+
+class MixinSalamKardan:
+    def salam(self):
+        print("salam,", self.name)
+
+
+class B(MixinSalamKardan, A):
+    pass
+
+a = B("Ashkan")
+a.salam()
+
+
+
+a = {}
+a["name"] = "asghar"
+
+
+a.update({"name": "Sakineh"})
+# a.setdefault("name", "ashkan")
+print(a)
