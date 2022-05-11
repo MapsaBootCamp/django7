@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+Mapsa Book Library
+{% endblock title %}
+
+
+
+{% block content %}
+<h1>Book Category</h1>
+<ul>
+    <li><a>all</a></li>
+    {% for category in categories %}
+    <li>{{category.name}}</li>
+    {% endfor %}
+</ul>
+{% endblock content %}
+
+

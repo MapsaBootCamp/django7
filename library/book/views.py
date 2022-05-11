@@ -11,6 +11,16 @@ from matplotlib.pyplot import title
 
 from .models import Book, Category
 
+
+def index(request):
+    cat_qs = Category.objects.all()
+    return render(request, "book/index.html", {"categories": cat_qs})
+
+def book_list(request):
+    book_qs = Book.objects.all()
+    return render(request, "book/book_list.html", {"books": book_qs})
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class BookList(View):
     

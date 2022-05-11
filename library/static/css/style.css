@@ -1,0 +1,29 @@
+.body_ {
+    margin: 0;
+    background-color: gray;
+}
+
+.header-library {
+    background-color: teal;
+    color: white;
+    font-size: 20px;
+    
+}
+
+.header-library ul {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    padding: 10px ;
+    margin: 0;
+
+}
+
+.header-library ul li {
+    margin-right: 10px;
+
+}
+
+footer {
+    background-color: aqua;
+}

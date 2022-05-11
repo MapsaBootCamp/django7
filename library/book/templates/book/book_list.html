@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+Book list
+{% endblock title %}
+
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+
+{% block content %}
+<h1>Book List</h1>
+    {% for book in books %}
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{book.title}}</h5>
+                <p class="card-text">{{book.author1}}</p>
+                <a href="#" class="btn btn-primary">Book Detail</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}
+
+

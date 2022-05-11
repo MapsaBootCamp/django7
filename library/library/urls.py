@@ -1,8 +1,17 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+from book.views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/book/', include("book.urls")),
+    path('', index, name="home"),
+    path('book/', include("book.urls")),
     path('api/rent/', include("rent.urls")),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
