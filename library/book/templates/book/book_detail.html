@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+Book Detail
+{% endblock title %}
+
+{% block content %}
+<p>title: {{book.title}}</p>
+<p>author: {{book.author1}}</p>
+<p>tarjome shode: {{book.translated}}</p>
+<p>tedad dar kol: {{book.qty}}</p>
+<h1>Book Comments:</h1>
+{% for comment in comments %}
+    {% if not comment.content %}
+    <p>این شلغم کانتنت ندارد!</p>
+    {% else %}
+    <p>{{comment.content}}</p>
+    {% endif %}
+    <p>{{comment.rate}}</p>
+    <br/>
+{% endfor %}
+
+<form action="{% url 'book_add_comment' book.id%}" method="post">
+    {% csrf_token %}
+    {{comment_form.as_table}}
+    <input type="submit" value="add comment">
+</form>
+
+{% endblock content %}

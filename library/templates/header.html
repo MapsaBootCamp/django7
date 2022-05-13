@@ -1,4 +1,11 @@
 <ul>
-    <li>Home</li>
+    <li><a href="{% url 'home'%}">Home</a></li>
+    <li><a href="{% url 'book_list_template'%}">Book_List</a></li>
     <li>About</li>
+    {% if user.is_authenticated %}
+        "salam {{user.username}}"
+        <li style="margin-left: 10px"><a href="{% url 'logout'%}">logout</a></li>
+    {% else %}
+        <li><a href="{% url 'login'%}">Login</a></li>
+    {% endif %}
 </ul>

@@ -10,6 +10,7 @@ urlpatterns = [
     path('', index, name="home"),
     path('book/', include("book.urls")),
     path('api/rent/', include("rent.urls")),
+    path('user/', include("user.urls")),
 ]
 
 

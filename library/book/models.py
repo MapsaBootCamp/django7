@@ -50,5 +50,6 @@ class Book(models.Model):
         return super().save(*args, **kwargs)
 
 class Comment(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="comments")
+    content = models.TextField(null=True, blank=True)
     rate = models.SmallIntegerField(default=3)

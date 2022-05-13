@@ -1,24 +1,57 @@
-from email.headerregistry import ContentDispositionHeader
 import json
 
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
 from django.views import View
 from django.forms.models import model_to_dict
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from matplotlib.pyplot import title
 
-from .models import Book, Category
+from .models import Book, Category, Comment
+from .forms import CommentForm
+
+def add_comment(request, book_id):
+    if request.method == "POST":    
+        comment_form = CommentForm(request.POST)
+        book = get_object_or_404(Book, id=book_id)
+        if comment_form.is_valid():
+            Comment.objects.create(book=book, **comment_form.cleaned_data)
+            return redirect(reverse('book_detail_template', kwargs={'id': book.id}))
+        else:
+            ## TODO: in hal beham zan ro dorost KOOOOON.
+            comments = book.comments.all()
+            context = {
+                "book": book, 
+                "comments": comments,
+                "comment_form": comment_form
+                }
+            return render(request, "book/book_detail.html", context)
+    else:
+        return HttpResponse(status=400)
 
 
 def index(request):
+    print("session:",request.session.get("name"))
     cat_qs = Category.objects.all()
     return render(request, "book/index.html", {"categories": cat_qs})
 
-def book_list(request):
+def book_list(request: HttpRequest):
+    request.session["name"] = "Gholam"
     book_qs = Book.objects.all()
     return render(request, "book/book_list.html", {"books": book_qs})
+
+
+def book_detail(request, id):
+    book = get_object_or_404(Book, id=id)
+    comments = book.comments.all()
+    comment_form = CommentForm()
+    context = {
+        "book": book, 
+        "comments": comments,
+        "comment_form": comment_form
+        }
+    return render(request, "book/book_detail.html", context)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
