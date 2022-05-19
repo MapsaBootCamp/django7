@@ -5,10 +5,14 @@ Book list
 {% endblock title %}
 
 {% block content %}
+<form method="get">
+    <input type="search" name="search">
+    <input type="submit" value="search">
+</form>
 <h1>Book List</h1>
     {% for book in books %}
         <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
+            <img src="{{book.img.url}}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">{{book.title}}</h5>
                 <p class="card-text">{{book.author1}}</p>
@@ -16,6 +20,23 @@ Book list
             </div>
         </div>
     {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.number | add:"-1"}} </a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page_obj.number }}
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.number | add:"1"}}</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 {% endblock content %}
 
 
