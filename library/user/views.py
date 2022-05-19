@@ -33,19 +33,24 @@ class Login(View):
             # logout(request)
             return redirect('/')
         form = LoginForm()
+        next = request.GET.get("next")
         context = {
             'form': form,
+            'next': next
         }
         return render(request, 'user/login.html', context)
 
     def post(self, request):
         form = LoginForm(request.POST)
+        next = request.POST.get("next")
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user:
                 login_(request, user)
+                if next:
+                    return redirect(next)
                 return redirect('/')
             else:
                 return redirect('login')
