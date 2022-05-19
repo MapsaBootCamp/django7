@@ -35,6 +35,7 @@ class Book(models.Model):
     objects = models.Manager()
     mandaravordi_manager = BookManager()
     slug = models.SlugField(null=True, blank=True)
+    img = models.ImageField(upload_to="books/", default="default.jpg")
 
     def __str__(self) -> str:
         return self.title
