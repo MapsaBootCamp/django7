@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from app.models import Todo, Category
@@ -23,10 +24,18 @@ class CategoryDetailSerializer(serializers.Serializer):
         return instance
 
 class TodoListSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = Todo
-        fields = ["id", "title", "category"]
+        fields = ["id", "title", "category", "due_date"]
+        extra_kwargs = {
+            'due_date': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        category = validated_data.pop("category")
+        category_obj = get_object_or_404(Category, user=self.context["user"], pk=category.id)
+        return Todo.objects.create(**validated_data, category=category_obj)
 
 class TodoDetailSerializer(serializers.ModelSerializer):
 
