@@ -20,7 +20,10 @@ class Category(AuditModel):
     def __str__(self) -> str:
         return self.name
 
-
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'user'], name='unique category')
+        ]
 
 
 class Todo(AuditModel):
