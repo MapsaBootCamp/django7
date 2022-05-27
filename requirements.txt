@@ -1,0 +1,13 @@
+Django==4.0.4
+django-extensions==3.1.5
+djangorestframework==3.13.1
+jupyter==1.0.0
+jupyter-client==7.3.0
+jupyter-console==6.4.3
+jupyter-core==4.10.0
+jupyterlab-pygments==0.2.2
+jupyterlab-widgets==1.1.0
+jupyterthemes==0.20.0
+matplotlib==3.5.1
+numpy==1.22.3
+Pillow==9.1.0
