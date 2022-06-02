@@ -1,7 +1,17 @@
+from attr import field
 from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
+from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 
-from app.models import Todo, Category
+from app.models import PostInstagrami, Todo, Category
+
+User = get_user_model()
+
+
+# HyperlinkedModelSerializer ----> ListView
+# ModelSerializer ----> DetailView
 
 
 class CategoryListSerializer(serializers.HyperlinkedModelSerializer):
@@ -42,3 +52,37 @@ class TodoDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Todo
         exclude = ["id"]
+
+
+class CustomCharField(serializers.Field):
+
+    def to_representation(self, value):
+        return f"salam {value}"
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ["username", "first_name"]
+
+
+
+class PostInstagramiSerializer(serializers.ModelSerializer):
+    days_since_created = serializers.SerializerMethodField()
+    user = UserSerializer(read_only=True)
+    username = CustomCharField(source="user.username", read_only=True)
+
+    class Meta:
+        model = PostInstagrami
+        fields = "__all__"
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
+
+    def get_days_since_created(self, obj):
+        return (now().date() - obj.created_at).days
+
+    def create(self, validated_data):
+        return PostInstagrami.objects.create(user=self.context["user"], **validated_data)
+

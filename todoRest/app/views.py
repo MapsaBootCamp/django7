@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import authentication, permissions
@@ -12,8 +13,8 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
 
-from app.serializers import CategoryDetailSerializer, CategoryListSerializer, TodoDetailSerializer, TodoListSerializer
-from app.models import Category, Todo
+from app.serializers import CategoryDetailSerializer, CategoryListSerializer, PostInstagramiSerializer, TodoDetailSerializer, TodoListSerializer
+from app.models import Category, PostInstagrami, Todo
 
 
 class CategoryDetailView(RetrieveUpdateDestroyAPIView):
@@ -78,4 +79,51 @@ class TodoDetail(RetrieveUpdateDestroyAPIView):
     
     def get_queryset(self):
         return super().get_queryset().filter(category__user=self.request.user)
+
+
+
+class PostInstaView(APIView):
+
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        qs = PostInstagrami.objects.select_related("user")
+        serilizer = PostInstagramiSerializer(qs, many=True)
+        return Response(serilizer.data)
+    
+    def post(self, request):
+        serializer = PostInstagramiSerializer(data=request.data, context={"user": request.user})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PostInstagramiViewSet(viewsets.ViewSet):
+    
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        print("hello list")
+        queryset = PostInstagrami.objects.select_related("user")
+        serializer = PostInstagramiSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        print("hello detail")
+        queryset = PostInstagrami.objects.select_related("user")
+        post = get_object_or_404(queryset, pk=pk)
+        serializer = PostInstagramiSerializer(post)
+        return Response(serializer.data)
+
+    def create(self, request):
+        serializer = PostInstagramiSerializer(data=request.data, context={"user": request.user})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
