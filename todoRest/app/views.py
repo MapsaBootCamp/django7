@@ -12,7 +12,6 @@ from rest_framework import authentication, permissions
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
-
 from app.serializers import CategoryDetailSerializer, CategoryListSerializer, PostInstagramiSerializer, TodoDetailSerializer, TodoListSerializer
 from app.models import Category, PostInstagrami, Todo
 
@@ -20,7 +19,6 @@ from app.models import Category, PostInstagrami, Todo
 class CategoryDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryDetailSerializer
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
@@ -29,7 +27,6 @@ class CategoryDetailView(RetrieveUpdateDestroyAPIView):
 
 class CategoryView(APIView):
     
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
@@ -51,7 +48,6 @@ class CategoryView(APIView):
 
 class TodoList(APIView):
 
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [JSONParser, MultiPartParser]
 
@@ -74,7 +70,6 @@ class TodoList(APIView):
 class TodoDetail(RetrieveUpdateDestroyAPIView):
     queryset = Todo.objects.all()
     serializer_class = TodoDetailSerializer
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
@@ -84,7 +79,6 @@ class TodoDetail(RetrieveUpdateDestroyAPIView):
 
 class PostInstaView(APIView):
 
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -103,7 +97,6 @@ class PostInstaView(APIView):
 
 class PostInstagramiViewSet(viewsets.ViewSet):
     
-    authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request):

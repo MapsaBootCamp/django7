@@ -1,8 +1,10 @@
-from distutils.command.upload import upload
 from django.db import models
 from django.conf import settings
+from django.utils.html import format_html
+from django.contrib import admin
 
 from rest_framework.authtoken.models import Token
+
 
 from .signals import post_done_todo
 
@@ -47,6 +49,7 @@ class PostInstagrami(AuditModel):
     caption = models.CharField(max_length=2400)
     img = models.ImageField(upload_to="postImages/")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
 
     def __str__(self) -> str:
         return self.caption
