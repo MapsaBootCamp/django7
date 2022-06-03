@@ -95,28 +95,43 @@ class PostInstaView(APIView):
             Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PostInstagramiViewSet(viewsets.ViewSet):
+# class PostInstagramiViewSet(viewsets.ViewSet):
     
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def list(self, request):
+#         print("hello list")
+#         queryset = PostInstagrami.objects.select_related("user")
+#         serializer = PostInstagramiSerializer(queryset, many=True)
+#         return Response(serializer.data)
+
+#     def retrieve(self, request, pk=None):
+#         print("hello detail")
+#         queryset = PostInstagrami.objects.select_related("user")
+#         post = get_object_or_404(queryset, pk=pk)
+#         serializer = PostInstagramiSerializer(post)
+#         return Response(serializer.data)
+
+#     def create(self, request):
+#         serializer = PostInstagramiSerializer(data=request.data, context={"user": request.user})
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         else:
+#             Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+# TODO: 1. slugfield retrieve, 2. list and retrieve have differnet serializer,
+class PostInstagramiViewSet(viewsets.ModelViewSet):
+
     permission_classes = [permissions.IsAuthenticated]
+    queryset = PostInstagrami.objects.select_related("user")
+    serializer_class = PostInstagramiSerializer
 
-    def list(self, request):
-        print("hello list")
-        queryset = PostInstagrami.objects.select_related("user")
-        serializer = PostInstagramiSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        print("hello detail")
-        queryset = PostInstagrami.objects.select_related("user")
-        post = get_object_or_404(queryset, pk=pk)
-        serializer = PostInstagramiSerializer(post)
-        return Response(serializer.data)
-
-    def create(self, request):
-        serializer = PostInstagramiSerializer(data=request.data, context={"user": request.user})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"user": self.request.user})
+        return context
+    
