@@ -16,6 +16,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.decorators import action
 
+from .tasks import my_multiply
 from app.serializers import CategoryDetailSerializer, CategoryListSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer
 from app.models import Category, PostInstagrami, Todo
 
@@ -34,6 +35,7 @@ class CategoryView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
+        my_multiply.delay(2, 6)
         qs = Category.objects.filter(user=request.user).order_by("-created_at")
         serializer = CategoryListSerializer(qs, many=True, context={'request': request})
         return Response(serializer.data)
