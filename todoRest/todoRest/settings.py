@@ -1,5 +1,10 @@
 from pathlib import Path
+import os
 from datetime import timedelta
+from dotenv import load_dotenv, find_dotenv
+
+env_file = Path(find_dotenv(usecwd=True))
+load_dotenv(verbose=True, dotenv_path=env_file)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,7 +24,7 @@ REST_FRAMEWORK = {
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#z^l%x0pdx$&ul=bgbm98zqvk1ifn#7edyf63^c(#j$bf&^tr1'
+SECRET_KEY = os.environ.get("SECRET_KEY", "abcd")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -82,6 +87,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.CustomMiddleware'
 ]
 
 ROOT_URLCONF = 'todoRest.urls'

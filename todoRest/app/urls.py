@@ -1,11 +1,12 @@
 from django.urls import path
 
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from .views import CategoryDetailView, CategoryView, PostInstaView, TodoDetail, TodoList, PostInstagramiViewSet
+from .views import CategoryDetailView, CategoryView, UserViewset, PostInstaView, TodoDetail, TodoList, PostInstagramiViewSet
 
 router = DefaultRouter()
-router.register("posts", PostInstagramiViewSet, basename="posts")
+router.register("posts", PostInstagramiViewSet, basename="postinstagrami")
+router.register("accounts", UserViewset, basename="account")
 
 urlpatterns = [
     path('todo-list/', TodoList.as_view(), name="todo_list"),

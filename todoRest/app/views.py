@@ -1,6 +1,8 @@
 from django.db import IntegrityError
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
@@ -12,7 +14,9 @@ from rest_framework import authentication, permissions
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
-from app.serializers import CategoryDetailSerializer, CategoryListSerializer, PostInstagramiSerializer, TodoDetailSerializer, TodoListSerializer
+from rest_framework.decorators import action
+
+from app.serializers import CategoryDetailSerializer, CategoryListSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer
 from app.models import Category, PostInstagrami, Todo
 
 
@@ -83,11 +87,11 @@ class PostInstaView(APIView):
 
     def get(self, request):
         qs = PostInstagrami.objects.select_related("user")
-        serilizer = PostInstagramiSerializer(qs, many=True)
+        serilizer = PostInstagramiListSerializer(qs, many=True)
         return Response(serilizer.data)
     
     def post(self, request):
-        serializer = PostInstagramiSerializer(data=request.data, context={"user": request.user})
+        serializer = PostInstagramiListSerializer(data=request.data, context={"user": request.user})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -128,10 +132,32 @@ class PostInstagramiViewSet(viewsets.ModelViewSet):
 
     permission_classes = [permissions.IsAuthenticated]
     queryset = PostInstagrami.objects.select_related("user")
-    serializer_class = PostInstagramiSerializer
+    lookup_field = "slug"
+
+    def retrieve(self, request: HttpRequest, *args, **kwargs):
+        if request.user.has_perm("app.gozaresh_kardan"):
+            return super().retrieve(request, *args, **kwargs)
+        else:
+            raise Exception("dari vari Moein")
+
+    def get_serializer_class(self):
+        if self.action == "list" or self.action == "create":
+            return PostInstagramiListSerializer
+        else:
+            return PostInstagramiDetailSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context.update({"user": self.request.user})
         return context
     
+    @action(detail=False, methods=["GET"], url_path="post-jadid", url_name="post-jadid")
+    def recent_posts(self, request):
+        recent_posts_ = PostInstagrami.objects.all().order_by('-created_at')[:3]
+        serializer = PostInstagramiListSerializer(recent_posts_, many=True, context={"request": request})
+        return Response(serializer.data)
+
+
+class UserViewset(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

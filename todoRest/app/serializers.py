@@ -1,4 +1,6 @@
+from cgitb import lookup
 from attr import field
+from django.forms import SlugField
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.contrib.auth import get_user_model
@@ -67,8 +69,23 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["username", "first_name"]
 
 
+class PostInstagramiListSerializer(serializers.HyperlinkedModelSerializer):
+    # url = serializers.HyperlinkedIdentityField(
+    #     read_only=True,
+    #     view_name='posts-detail',
+    #     lookup_field= 'slug'
+    # )
+    class Meta:
+        model = PostInstagrami
+        fields = ["url", "caption", "img"]
+        lookup_field = "slug"
+        extra_kwargs = {"url": {"lookup_field": "slug"}}
+    
+    def create(self, validated_data):
+        return PostInstagrami.objects.create(user=self.context["user"], **validated_data)
 
-class PostInstagramiSerializer(serializers.ModelSerializer):
+
+class PostInstagramiDetailSerializer(serializers.ModelSerializer):
     days_since_created = serializers.SerializerMethodField()
     user = UserSerializer(read_only=True)
     username = CustomCharField(source="user.username", read_only=True)
@@ -76,13 +93,11 @@ class PostInstagramiSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostInstagrami
         fields = "__all__"
+
         extra_kwargs = {
             'user': {'read_only': True}
         }
 
     def get_days_since_created(self, obj):
         return (now().date() - obj.created_at).days
-
-    def create(self, validated_data):
-        return PostInstagrami.objects.create(user=self.context["user"], **validated_data)
 

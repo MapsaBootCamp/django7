@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django import forms
-from app.models import Category, PostInstagrami, Todo
+from app.models import Category, PostInstagramiProxyAdmin, Todo
 
 class PostForm(forms.ModelForm):
     class Meta:
-        model = PostInstagrami
+        model = PostInstagramiProxyAdmin
         fields = ["caption", "img"]
 
         
-@admin.register(PostInstagrami)
+@admin.register(PostInstagramiProxyAdmin)
 class PostAdmin(admin.ModelAdmin):
     list_display = ("id", "caption", "user")
     form = PostForm
@@ -21,6 +21,8 @@ class PostAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     def get_queryset(self, request):
+        if request.user.is_superuser:
+            return super().get_queryset(request)
         return super().get_queryset(request).filter(user=request.user)
     # fieldsets = (
     #     (None, {
@@ -34,4 +36,4 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Todo)
 admin.site.register(Category)
-# admin.site.register(PostInstagrami, PostAdmin)
+# admin.site.register(PostInstagramiProxyAdmin, PostAdmin)
