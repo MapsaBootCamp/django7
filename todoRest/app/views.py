@@ -1,8 +1,16 @@
+import random
+
 from django.db import IntegrityError
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
+from django.core.cache import cache
+from django.core.mail import send_mail
+from django.conf import settings
 
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.generics import GenericAPIView, RetrieveUpdateDestroyAPIView
@@ -16,7 +24,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.decorators import action
 
-from .tasks import my_multiply
+from .tasks import async_send_mail, my_multiply
 from app.serializers import CategoryDetailSerializer, CategoryListSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer
 from app.models import Category, PostInstagrami, Todo
 
@@ -30,13 +38,23 @@ class CategoryDetailView(RetrieveUpdateDestroyAPIView):
         return super().get_queryset().filter(user=self.request.user)
 
 
+class ReadOnly(permissions.BasePermission):
+    
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+
+
 class CategoryView(APIView):
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated|ReadOnly]
     
+    # @method_decorator(cache_page(60 * 2))
+    # @method_decorator(vary_on_headers("Authorization",))
     def get(self, request):
+        print("user:100", cache.get("user:100"))
         my_multiply.delay(2, 6)
         qs = Category.objects.filter(user=request.user).order_by("-created_at")
+        qs = Category.objects.all().order_by("-created_at")
         serializer = CategoryListSerializer(qs, many=True, context={'request': request})
         return Response(serializer.data)
 
@@ -59,6 +77,7 @@ class TodoList(APIView):
 
     def get(self, request):
         qs = Todo.objects.all().filter(category__user=request.user)
+        cache.set("user:100", qs, 100)
         serializer = TodoListSerializer(qs, many=True)
         print("request..accepted_renderer ", request.accepted_renderer)
     
@@ -163,3 +182,43 @@ class PostInstagramiViewSet(viewsets.ModelViewSet):
 class UserViewset(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class SendSms(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        result = random.randint(1000, 9999)
+        cache.set(request.user.username, result, 120)
+        subject = 'code for login'
+        message = f'code: {result}'
+        email_from = "ashkan.ekbatan90@gmail.com"
+        recipient_list = ['naghavi.mohamad68@gmail.com',]
+        async_send_mail.delay(subject, message, email_from, recipient_list)
+        return Response({"status": "success", "code": result})
+
+    def post(self, request):
+        cache_code_ = cache.get(request.user.username)
+        send_code_ = request.data.get("code")
+        if send_code_:
+            if send_code_== cache_code_:
+                return Response({"status": "success"})
+            else:
+                return Response({"status": "error", "error_message": "code expire shode ya eshteb zadi, mojadad talash kon"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"status": "error", "error_message": "code field is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+class GherUmadan(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.has_perm("app.ide_soroush")
+
+
+class Kabareh(APIView):
+
+    permission_classes = [permissions.IsAuthenticated , GherUmadan]
+
+    def get(self, request):
+        return Response({"status": "baba karam"})

@@ -11,6 +11,11 @@ from rest_framework.authtoken.models import Token
 from .signals import post_done_todo
 
 
+class A(models.Model):
+    class Meta:
+        abstract = True
+
+        
 class AuditModel(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)

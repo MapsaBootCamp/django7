@@ -1,6 +1,3 @@
-from cgitb import lookup
-from attr import field
-from django.forms import SlugField
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.contrib.auth import get_user_model
@@ -15,15 +12,36 @@ User = get_user_model()
 # HyperlinkedModelSerializer ----> ListView
 # ModelSerializer ----> DetailView
 
+def check_name(value):
+    if 'mapsa' not in value:
+        raise serializers.ValidationError('name field must have mapsa as prefix.')
 
 class CategoryListSerializer(serializers.HyperlinkedModelSerializer):
+    
+    capital_name = serializers.SerializerMethodField()
+    # name = serializers.CharField(validators=[check_name])
+    
+    def validate_name(self, val):
+        if 'mapsa' not in val:
+            raise serializers.ValidationError('name field must have mapsa as prefix.')
+        return val
+    
+    # def validate(self, data):
+    #     if 'mapsa' not in data.get("name"):
+    #         raise serializers.ValidationError('name field must have mapsa as prefix.')
+    #     return data
+
     class Meta:
         model = Category
-        fields = ['url', 'name']
-
+        fields = ['url', 'name', 'capital_name']
+        
     def create(self, validated_data):
         name = validated_data.get("name")
         return Category.objects.create(user=self.context["user"], name=name)
+    
+    def get_capital_name(self, obj):
+        if obj.name:
+            return obj.name.upper()
 
 
 class CategoryDetailSerializer(serializers.Serializer):
@@ -34,6 +52,7 @@ class CategoryDetailSerializer(serializers.Serializer):
         instance.name = validated_data.get("name", instance.name)
         instance.save()
         return instance
+
 
 class TodoListSerializer(serializers.ModelSerializer):
     
