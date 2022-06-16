@@ -1,3 +1,4 @@
+from pyexpat import model
 from tabnanny import verbose
 from django.db import models
 from django.conf import settings
@@ -75,3 +76,20 @@ class PostInstagramiProxyAdmin(PostInstagrami):
         verbose_name = "post"
         verbose_name_plural = "posts"
         ordering =["caption"]
+
+
+class FollowerTable(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name="follwer_table", on_delete=models.CASCADE)
+    follower = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="followers", through="FollowerUser")
+    
+    def __str__(self) -> str:
+        return self.user.username
+
+class FollowerUser(models.Model):
+    Follow_STATUS = [("a", "Accept"), ("p", "Pending")]
+    follower = models.ForeignKey(FollowerTable, related_name="followers", on_delete=models.CASCADE) # manzureman following ast
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # darkhast_dahande
+    status = models.CharField(choices=Follow_STATUS, max_length=1)
+
+    def __str__(self) -> str:
+        return f"{self.follower.user.username} - {self.user.username}"

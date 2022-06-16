@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from app.models import Category, PostInstagramiProxyAdmin, Todo
+from app.models import Category, FollowerTable, FollowerUser, PostInstagramiProxyAdmin, Todo
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -36,4 +36,6 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Todo)
 admin.site.register(Category)
+admin.site.register(FollowerTable)
+admin.site.register(FollowerUser)
 # admin.site.register(PostInstagramiProxyAdmin, PostAdmin)

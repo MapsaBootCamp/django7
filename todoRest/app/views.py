@@ -23,10 +23,11 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.decorators import action
+from yaml import serialize
 
 from .tasks import async_send_mail, my_multiply
-from app.serializers import CategoryDetailSerializer, CategoryListSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer
-from app.models import Category, PostInstagrami, Todo
+from app.serializers import CategoryDetailSerializer, CategoryListSerializer, FollowerSerializer, FollowerTest, FollowingSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer
+from app.models import Category, FollowerTable, FollowerUser, PostInstagrami, Todo
 
 
 class CategoryDetailView(RetrieveUpdateDestroyAPIView):
@@ -222,3 +223,52 @@ class Kabareh(APIView):
 
     def get(self, request):
         return Response({"status": "baba karam"})
+
+
+class FollowerCRUD(viewsets.ViewSet):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        user_follower_obj = FollowerTable.objects.get(user=request.user)
+        qs = user_follower_obj.followers.all()
+        serializer = FollowerSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        seriailizer = FollowerSerializer(data=request.data, context={"user_darkhast_dahande": request.user})
+        if seriailizer.is_valid():
+            seriailizer.save()
+            return Response(status=201)
+        else:
+            return Response(serialize.errors)
+
+
+    @action(methods=["POST"], detail=True, url_path="accept-follow-request")
+    def accept_followe_request(self, request, pk=None):
+        follow_req_obj = get_object_or_404(FollowerUser, pk=pk)
+        if follow_req_obj.follower.user != request.user:
+            return Response(status=403)
+        follow_req_obj.status = "a"
+        follow_req_obj.save()
+        return Response(status=200)
+
+    @action(methods=["POST"], detail=True, url_path="reject-follow-request")
+    def reject_followe_request(self, request, pk=None):
+        follow_req_obj = get_object_or_404(FollowerUser, pk=pk)
+        if follow_req_obj.follower.user != request.user:
+            return Response(status=403)
+        follow_req_obj.delete()
+        return Response(status=204)
+
+    @action(methods=["GET"], detail=False, url_path="following-list")
+    def following_list(self, request):
+        qs = FollowerUser.objects.select_related("follower").filter(user=request.user, status="a")
+        serializer = FollowingSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(methods=["GET"], detail=False, url_path="test")
+    def test(self, request):
+        qs = FollowerTable.objects.all()
+        serializer = FollowerTest(qs, many=True)
+        return Response(serializer.data)

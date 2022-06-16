@@ -1,10 +1,11 @@
+from attr import fields
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-from app.models import PostInstagrami, Todo, Category
+from app.models import FollowerTable, FollowerUser, PostInstagrami, Todo, Category
 
 User = get_user_model()
 
@@ -120,3 +121,42 @@ class PostInstagramiDetailSerializer(serializers.ModelSerializer):
     def get_days_since_created(self, obj):
         return (now().date() - obj.created_at).days
 
+class FollowerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = FollowerUser
+        exclude = ["follower"]
+        extra_kwargs = {
+            "status": {
+                "read_only": True
+            }
+        }
+
+    def create(self, validated_data):
+        darkhast_dahande = self.context["user_darkhast_dahande"]
+        darkhast_shavande = validated_data["user"].follwer_table
+        return FollowerUser.objects.create(follower=darkhast_shavande, user=darkhast_dahande, status="p")
+
+class FollowTableSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = FollowerTable
+        fields = ["user"]
+
+
+class FollowingSerializer(serializers.ModelSerializer):
+    following = FollowTableSerializer(read_only=True, source="follower")
+
+    class Meta:
+        model = FollowerUser
+        fields = ["following"]
+
+
+class FollowerTest(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+    followers = FollowerSerializer(many=True)
+
+    class Meta:
+        model = FollowerTable
+        fields = ["user", "followers"]
