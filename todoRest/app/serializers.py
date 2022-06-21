@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
 
-from app.models import FollowerTable, FollowerUser, PostInstagrami, Todo, Category
+from app.models import Author, Book, FollowerTable, FollowerUser, PostInstagrami, Todo, Category
 
 User = get_user_model()
 
@@ -160,3 +160,18 @@ class FollowerTest(serializers.ModelSerializer):
     class Meta:
         model = FollowerTable
         fields = ["user", "followers"]
+
+
+############################ Library Test
+class BookModelSerialzer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Book
+        fields = "__all__"
+
+class AuthorModelSerialzer(serializers.ModelSerializer):
+    books = BookModelSerialzer(many=True, read_only=True)
+    class Meta:
+        model = Author
+        fields = "__all__"
+

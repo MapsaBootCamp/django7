@@ -3,7 +3,7 @@ from django.views.decorators.cache import cache_page
 
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from .views import CategoryDetailView, CategoryView, FollowerCRUD, GherUmadan, Kabareh, SendSms, UserViewset, PostInstaView, TodoDetail, TodoList, PostInstagramiViewSet
+from .views import AuthorBookListView, CategoryDetailView, CategoryView, FollowerCRUD, GherUmadan, Kabareh, SendSms, UserViewset, PostInstaView, TodoDetail, TodoList, PostInstagramiViewSet
 
 router = DefaultRouter()
 router.register("posts", PostInstagramiViewSet, basename="postinstagrami")
@@ -17,4 +17,5 @@ urlpatterns = [
     path('category-detail/<int:pk>', CategoryDetailView.as_view(), name="category-detail"),
     # path('posts/', PostInstaView.as_view(), name="posts"),
     path('gher/', Kabareh.as_view(), name="gher"),
+    path('library/authors/', AuthorBookListView.as_view(), name="author-book-list"),
 ] + router.urls

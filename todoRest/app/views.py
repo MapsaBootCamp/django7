@@ -26,8 +26,8 @@ from rest_framework.decorators import action
 from yaml import serialize
 
 from .tasks import async_send_mail, my_multiply
-from app.serializers import CategoryDetailSerializer, CategoryListSerializer, FollowerSerializer, FollowerTest, FollowingSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer
-from app.models import Category, FollowerTable, FollowerUser, PostInstagrami, Todo
+from app.serializers import AuthorModelSerialzer, CategoryDetailSerializer, CategoryListSerializer, FollowerSerializer, FollowerTest, FollowingSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer
+from app.models import Author, Category, FollowerTable, FollowerUser, PostInstagrami, Todo
 
 
 class CategoryDetailView(RetrieveUpdateDestroyAPIView):
@@ -272,3 +272,15 @@ class FollowerCRUD(viewsets.ViewSet):
         qs = FollowerTable.objects.all()
         serializer = FollowerTest(qs, many=True)
         return Response(serializer.data)
+
+
+########################### Library Test
+
+class AuthorBookListView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        qs = Author.objects.all()
+        serializer = AuthorModelSerialzer(qs, many=True)
+        return Response(serializer.data, status=200)
