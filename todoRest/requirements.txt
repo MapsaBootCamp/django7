@@ -1,0 +1,10 @@
+Django==4.0.4
+django-extensions==3.1.5
+djangorestframework==3.13.1
+djangorestframework-simplejwt==5.2.0
+Pillow==9.1.0
+celery==5.2.7
+python-dotenv
+redis
+gunicorn
+psycopg2-binary

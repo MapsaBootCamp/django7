@@ -23,7 +23,6 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.decorators import action
-from yaml import serialize
 
 from .tasks import async_send_mail, my_multiply
 from app.serializers import AuthorModelSerialzer, CategoryDetailSerializer, CategoryListSerializer, FollowerSerializer, FollowerTest, FollowingSerializer, PostInstagramiListSerializer, PostInstagramiDetailSerializer, TodoDetailSerializer, TodoListSerializer, UserSerializer

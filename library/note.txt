@@ -1,0 +1,15 @@
+nginx ---> web server (request---> proxy + handle static file)
+nginx ----> directive, context ----> http ---> server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_path http://localhost:8002
+    }
+}
+
+
+nginx -----> wsgi (gunicorn) ----> web app (django)
+
+wsgi ----> gunicorn project_name.wsgi:application
+
